@@ -11,7 +11,8 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.styl$/, use: [ 'style-loader', 'css-loader', 'stylus-loader']}
+      { test: /\.frag|\.vert$/, use: 'raw-loader' },
+      { test: /\.styl$/, use: [ 'style-loader', 'css-loader', 'stylus-loader' ] }
     ]
   },
   plugins: [
@@ -22,7 +23,7 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     open : true,
-    compress: true,
+    // compress: true,
     port: 9000
   }
 };
