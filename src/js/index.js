@@ -3,6 +3,7 @@ import vs from '../shaders/app.vert'
 import fs from '../shaders/app.frag'
 import initShader from './utils/cuon-utils'
 import Matrix4 from "./utils/cuon-matrix"
+import requestAnimationFrame from './utils/animationFrame'
 
 // import Matrix4 from './utils/cuon-matrix'
 
@@ -12,13 +13,19 @@ const App = class {
     App.initShaders(gl)
     App.initLight(gl)
     App.initModel(gl)
+    const content = App.drawFace('red')
+    const texture = gl.createTexture()
+    const uSampler = gl.getUniformLocation(gl.program, 'uSample')
+
+    App.loadTexture(gl, 24, texture, uSampler, content)
+
+    document.body.append(content)
 
     const vpMatrix = App.initCamera()
     const modelMatrix = new Matrix4()
     const normalMatrix = new Matrix4()
     Object.assign(this, { gl, vpMatrix, modelMatrix, normalMatrix })
-    this.render = this.render.bind(this)
-    const stop = requestAnimationFrame(this.render)
+    const stop = requestAnimationFrame(this.render, this)
     this.render()
   }
   render () {
@@ -39,6 +46,18 @@ const App = class {
     gl.uniformMatrix4fv(uMvpMatrix, false, mvpMatrix.elements)
     // gl.drawArrays(gl.POINTS, 0, 8)
     gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_BYTE, 0)
+  }
+  static loadTexture (gl, n, texture, uSampler, image) {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1)
+    gl.activeTexture(gl.TEXTURE0)
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image)
+    gl.uniform1i(uSampler, 0)
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n)
   }
   static initWebgl (containId) {
     const container  = document.getElementById(containId)
@@ -142,6 +161,7 @@ const App = class {
 
     const indexBuffer = gl.createBuffer()
     if (!App.initArrayBuffer(gl, vertices, 3, gl.FLOAT, 'aPosition')) return
+    if (!App.initArrayBuffer(gl, vertices, 3, gl.FLOAT, 'aTexCoord')) return
     if (!App.initArrayBuffer(gl, colors, 3, gl.FLOAT, 'aColor')) return
     if (!App.initArrayBuffer(gl, normals, 3, gl.FLOAT, 'aNormal'))
       if (!indexBuffer) return
@@ -160,6 +180,23 @@ const App = class {
     gl.vertexAttribPointer(aAttribute, num, type, false, 0, 0)
     gl.enableVertexAttribArray(aAttribute)
     return true
+  }
+  static drawFace (color) {
+    const canvas = document.createElement('canvas')
+    const size = 500
+    const solidWidth = 50
+    canvas.width = canvas.height = size
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillRect(0, 0, size, size)
+    ctx.rect(solidWidth, solidWidth, size - 2 * solidWidth, size - 2 * solidWidth)
+    ctx.lineJoin = 'round'
+    ctx.lineWidth = solidWidth
+    ctx.fillStyle = color
+    ctx.strokeStyle = color
+    ctx.stroke()
+    ctx.fill()
+    return canvas
   }
 }
 
