@@ -13,14 +13,7 @@ const App = class {
     App.initShaders(gl)
     App.initLight(gl)
     App.initModel(gl)
-
-    const content = App.drawAllFace('red')
-    const texture = gl.createTexture()
-    const uSampler = gl.getUniformLocation(gl.program, 'uSample')
-
-    App.loadTexture(gl, texture, uSampler, content)
-
-    document.body.append(content)
+    App.initTexture(gl)
 
     const vpMatrix = App.initCamera()
     const modelMatrix = new Matrix4()
@@ -180,6 +173,13 @@ const App = class {
 
     this.modelMatrix = new Matrix4()
     this.normalMatrix = new Matrix4()
+  }
+  static initTexture (gl) {
+    const content = App.drawAllFace()
+    const texture = gl.createTexture()
+    const uSampler = gl.getUniformLocation(gl.program, 'uSample')
+    App.loadTexture(gl, texture, uSampler, content)
+    document.body.append(content)
   }
   static initArrayBuffer (gl, data, num, type, attribute) {
     const buffer = gl.createBuffer()
