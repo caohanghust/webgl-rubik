@@ -116,18 +116,18 @@ const App = class {
 
     ])
 
-    const colors = new Float32Array([
-      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, // v0-v1-v2-v3 front(white)
+    const st = new Float32Array([
+      1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, // v0-v1-v2-v3 front
 
-      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, // v0-v3-v4-v5 right(white)
+      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, // v0-v3-v4-v5 right
 
-      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, // v0-v5-v6-v1 up(white)
+      1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, // v0-v5-v6-v1 up
 
-      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, // v1-v6-v7-v2 left(white)
+      1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, // v1-v6-v7-v2 left
 
-      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, // v7-v4-v3-v2 down(white)
+      0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, // v7-v4-v3-v2 down
 
-      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 // v4-v7-v6-v5 back(white)
+      0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0 // v4-v7-v6-v5 back
     ])
 
     const normals = new Float32Array([
@@ -161,8 +161,7 @@ const App = class {
 
     const indexBuffer = gl.createBuffer()
     if (!App.initArrayBuffer(gl, vertices, 3, gl.FLOAT, 'aPosition')) return
-    if (!App.initArrayBuffer(gl, vertices, 3, gl.FLOAT, 'aTexCoord')) return
-    if (!App.initArrayBuffer(gl, colors, 3, gl.FLOAT, 'aColor')) return
+    if (!App.initArrayBuffer(gl, st, 2, gl.FLOAT, 'aTexCoord')) return
     if (!App.initArrayBuffer(gl, normals, 3, gl.FLOAT, 'aNormal'))
       if (!indexBuffer) return
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)

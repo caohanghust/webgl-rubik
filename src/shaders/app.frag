@@ -18,5 +18,6 @@ void main () {
   vec3 diffuse = uLightColor * vec3(color) * nDotL;
   // 环境光反射颜色
   vec3 ambient = uAmbientLight * vec3(color);
+//  gl_FragColor = vec4(1, 0, 0, 1);
   gl_FragColor = vec4(diffuse + ambient, color.a);
 }
