@@ -13,11 +13,12 @@ const App = class {
     App.initShaders(gl)
     App.initLight(gl)
     App.initModel(gl)
-    const content = App.drawFace('red')
+
+    const content = App.drawAllFace('red')
     const texture = gl.createTexture()
     const uSampler = gl.getUniformLocation(gl.program, 'uSample')
 
-    App.loadTexture(gl, 24, texture, uSampler, content)
+    App.loadTexture(gl, texture, uSampler, content)
 
     document.body.append(content)
 
@@ -46,8 +47,9 @@ const App = class {
     gl.uniformMatrix4fv(uMvpMatrix, false, mvpMatrix.elements)
     // gl.drawArrays(gl.POINTS, 0, 8)
     gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_BYTE, 0)
+
   }
-  static loadTexture (gl, n, texture, uSampler, image) {
+  static loadTexture (gl, texture, uSampler, image) {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1)
     gl.activeTexture(gl.TEXTURE0)
     gl.bindTexture(gl.TEXTURE_2D, texture)
@@ -57,7 +59,6 @@ const App = class {
 
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image)
     gl.uniform1i(uSampler, 0)
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n)
   }
   static initWebgl (containId) {
     const container  = document.getElementById(containId)
@@ -81,7 +82,7 @@ const App = class {
     const uAmbientLight = gl.getUniformLocation(gl.program, 'uAmbientLight')
 
     // 设置光线颜色
-    gl.uniform3f(uLightColor, 1.0, 0.0, 0.0)
+    gl.uniform3f(uLightColor, .7, .7, .7)
     // 设置光源位置
     gl.uniform3f(uLightPosition, 5, 5, 5)
     // 全局光颜色
@@ -115,19 +116,29 @@ const App = class {
       1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0 // v4-v7-v6-v5 back
 
     ])
+    /* --------- stmap ---------*/
+    //(0,1)               (1,1)
+    //  -------------------
+    //  |     |     |     |
+    //  |  f  |  b  |  l  |
+    //  |_____|_____|_____|
+    //  |     |     |     |
+    //  |  r  |  u  |  d  |
+    //  |_____|_____|_____|
+    //(0,0)               (1,0)
 
     const st = new Float32Array([
-      1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, // v0-v1-v2-v3 front
+      1 / 3, 1, 0, 1, 0, .5, 1 / 3, .5, // v0-v1-v2-v3 front
 
-      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, // v0-v3-v4-v5 right
+      0, 0, 0, .5, 1 / 3, .5, 1 / 3, 0, // v0-v3-v4-v5 right
 
-      1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, // v0-v5-v6-v1 up
+      1 / 3, 0, 1 / 3, .5, 2 / 3, .5, 2 / 3, 0, // v0-v5-v6-v1 up
 
-      1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, // v1-v6-v7-v2 left
+      2 / 3, .5, 2 / 3, 1, 1, 1, 1, .5, // v1-v6-v7-v2 left
 
-      0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, // v7-v4-v3-v2 down
+      2 / 3, 0, 2 / 3, .5, 1, .5, 1, 0, // v7-v4-v3-v2 down
 
-      0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0 // v4-v7-v6-v5 back
+      1 / 3, .5, 1 / 3, 1, 2 / 3, 1, 2 / 3, .5 // v4-v7-v6-v5 back
     ])
 
     const normals = new Float32Array([
@@ -179,6 +190,37 @@ const App = class {
     gl.vertexAttribPointer(aAttribute, num, type, false, 0, 0)
     gl.enableVertexAttribArray(aAttribute)
     return true
+  }
+
+  static drawAllFace () {
+    const canvas = document.createElement('canvas')
+    const itemSize = 100
+    const solidWidth = 10
+    const ctx = canvas.getContext('2d')
+    canvas.width = itemSize * 3
+    canvas.height = itemSize * 2
+
+    ctx.lineJoin = 'round'
+    ctx.lineWidth = solidWidth
+    const drawItem = (x, y, color) => {
+      ctx.beginPath()
+      ctx.fillStyle = color
+      ctx.strokeStyle = color
+      ctx.rect(x + solidWidth, y + solidWidth, itemSize - 2 * solidWidth, itemSize - 2 * solidWidth)
+      ctx.stroke()
+      ctx.fill()
+      ctx.closePath()
+    }
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    drawItem(itemSize * 0, itemSize * 0, 'red')     //f
+    drawItem(itemSize * 1, itemSize * 0, 'orange')  //b
+    drawItem(itemSize * 2, itemSize * 0, 'white')   //l
+    drawItem(itemSize * 0, itemSize * 1, 'yellow')  //r
+    drawItem(itemSize * 1, itemSize * 1, 'blue')    //u
+    drawItem(itemSize * 2, itemSize * 1, 'green')   //d
+    return canvas
   }
   static drawFace (color) {
     const canvas = document.createElement('canvas')
