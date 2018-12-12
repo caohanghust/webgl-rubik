@@ -1,34 +1,40 @@
 import '../css/index.styl'
-import vs from '../shaders/cube.vert'
-import fs from '../shaders/cube.frag'
-import initShader from './utils/cuon-utils'
-import Matrix4 from "./utils/cuon-matrix"
 import Scene from './common/Scene'
 import Camera from './common/Camera'
+import Light from './common/Light'
 import CubeMesh from './modules/CubeMesh'
 import requestAnimationFrame from './utils/animationFrame'
-
-// import Matrix4 from './utils/cuon-matrix'
 
 const App = class {
   constructor (containId) {
     const gl = App.initWebgl(containId)
     const scene = this.scene = new Scene(gl)
-    const camera = this.initCamera()
-    const cube = new CubeMesh()
 
-    scene.add(camera)
+    this.initCamera(scene)
+    this.initLight(scene)
+
+    const cube = new CubeMesh()
     scene.add(cube)
-    App.initShaders(gl)
 
     const stop = requestAnimationFrame(this.render, this)
     this.render()
   }
-  initCamera () {
+  initCamera (scene) {
     const camera = new Camera()
     camera.setPerspective(90, 1, .1, 10)
     camera.lookAt(3, 3, 3, 0, 0, 0, 0, 1, 0)
-    return camera
+    scene.add(camera)
+  }
+  initLight (scene) {
+    const light = new Light()
+    // 环境光
+    light.setAmbientLight(.3, .3, .3)
+    // light.setAmbientLight(0, 0, 0)
+    // 点光源
+    const position = [ 10, 10, 10 ]
+    const color = [ .7, .7, .7 ]
+    light.addPointLight(position, color)
+    scene.add(light)
   }
   render () {
     const { scene } = this
@@ -43,12 +49,11 @@ const App = class {
     canvas.height = height
     container.appendChild(canvas)
 
-    return canvas.getContext('webgl')
-  }
-  static initShaders (gl) {
-    initShader(gl, vs, fs)
+    const gl = canvas.getContext('webgl')
     gl.enable(gl.DEPTH_TEST)
     gl.enable(gl.POLYGON_OFFSET_FILL)
+
+    return gl
   }
 }
 

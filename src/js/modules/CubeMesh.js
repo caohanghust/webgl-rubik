@@ -160,6 +160,9 @@ const CubeMesh = class extends Mesh {
   }
   initUniform (gl) {
     const { program, scene } = this
+    const { light } = scene
+    const { ambientLight, pointLights } = light
+    const pointLight = pointLights[0]
     gl.useProgram(program)
 
     const uLightColor = gl.getUniformLocation(program, 'uLightColor')
@@ -167,11 +170,11 @@ const CubeMesh = class extends Mesh {
     const uAmbientLight = gl.getUniformLocation(program, 'uAmbientLight')
 
     // 设置光线颜色
-    gl.uniform3f(uLightColor, .7, .7, .7)
+    gl.uniform3f(uLightColor, ...pointLight.color)
     // 设置光源位置
-    gl.uniform3f(uLightPosition, 5, 5, 5)
+    gl.uniform3f(uLightPosition, ...pointLight.position)
     // 全局光颜色
-    gl.uniform3f(uAmbientLight, .3, .3, .3)
+    gl.uniform3f(uAmbientLight, ...ambientLight)
   }
   initTexture (gl) {
     const { program } = this

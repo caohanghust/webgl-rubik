@@ -8,7 +8,7 @@ const Scene = class {
   constructor (gl) {
     this.gl = gl
     this.camera = null
-    this.light = []
+    this.light = null
     this.children = []
   }
   add (item) {
@@ -28,18 +28,18 @@ const Scene = class {
 
     // add Light
     if (item instanceof Light) {
-      this.light.push(item)
+      this.light = item
     }
   }
   render () {
-    const { gl, camera } = this
+    const { gl, camera, light } = this
     const vpMatrix = camera.matrix
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
     this.children.forEach(mesh => {
-      mesh.render(gl, vpMatrix)
+      mesh.render(gl, vpMatrix, light)
     })
   }
 }
