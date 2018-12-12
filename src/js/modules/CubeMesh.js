@@ -121,8 +121,12 @@ const cubeGeom = new Geometry(vertices, indices, normals, st)
 const cubeMaterial = new Material(uniforms)
 
 const CubeMesh = class extends Mesh {
-  constructor (gl) {
+  constructor () {
     super(cubeGeom, cubeMaterial)
+    this.modelMatrix = new Matrix4()
+    this.normalMatrix = new Matrix4()
+  }
+  initGlData (gl) {
     this.initArrayBuffer(gl)
     this.initProgram(gl)
     this.initUniform(gl)
@@ -155,7 +159,7 @@ const CubeMesh = class extends Mesh {
 
   }
   initUniform (gl) {
-    const { program } = this
+    const { program, scene } = this
     gl.useProgram(program)
 
     const uLightColor = gl.getUniformLocation(program, 'uLightColor')
@@ -188,8 +192,8 @@ const CubeMesh = class extends Mesh {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image)
     gl.uniform1i(uSampler, 0)
   }
-  render (gl, vpMatrix, modelMatrix, normalMatrix) {
-    const { program, buffers } = this
+  render (gl, vpMatrix) {
+    const { program, buffers, modelMatrix, normalMatrix } = this
 
     gl.useProgram(program)
     initAttributeVariable(gl, program.aPosition, buffers.vertexBuffer)
