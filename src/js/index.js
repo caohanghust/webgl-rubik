@@ -3,6 +3,7 @@ import Scene from './common/Scene'
 import Camera from './common/Camera'
 import Light from './common/Light'
 import CubeMesh from './modules/CubeMesh'
+import AxesMesh from './modules/AxesMesh'
 import requestAnimationFrame from './utils/animationFrame'
 
 const App = class {
@@ -14,7 +15,9 @@ const App = class {
     this.initLight(scene)
 
     const cube = new CubeMesh()
+    const axes = new AxesMesh()
     scene.add(cube)
+    scene.add(axes)
 
     const stop = requestAnimationFrame(this.render, this)
     this.render()

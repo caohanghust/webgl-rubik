@@ -118,7 +118,7 @@ const drawAllFace = () => {
 const uniforms = {}
 
 const cubeGeom = new Geometry(vertices, indices, normals, st)
-const cubeMaterial = new Material(uniforms)
+const cubeMaterial = new Material(vs, fs, uniforms)
 
 const CubeMesh = class extends Mesh {
   constructor () {
@@ -129,7 +129,7 @@ const CubeMesh = class extends Mesh {
   initGlData (gl) {
     this.initArrayBuffer(gl)
     this.initProgram(gl)
-    this.initUniform(gl)
+    this.initLight(gl)
     this.initTexture(gl)
   }
   initArrayBuffer (gl) {
@@ -147,7 +147,8 @@ const CubeMesh = class extends Mesh {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null)
   }
   initProgram (gl) {
-    const program = this.program = createProgram(gl, vs, fs)
+    const { vertexShader, fragmentShader } = this.material
+    const program = this.program = createProgram(gl, vertexShader, fragmentShader)
 
     program.aPosition = gl.getAttribLocation(program, 'aPosition')
     program.aNormal = gl.getAttribLocation(program, 'aNormal')
@@ -158,7 +159,7 @@ const CubeMesh = class extends Mesh {
     program.uNormalMatrix = gl.getUniformLocation(program, 'uNormalMatrix')
 
   }
-  initUniform (gl) {
+  initLight (gl) {
     const { program, scene } = this
     const { light } = scene
     const { ambientLight, pointLights } = light
