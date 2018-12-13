@@ -3,11 +3,6 @@ import Matrix4 from '../utils/cuon-matrix'
 import Geometry from '../common/Geometry'
 import Material from '../common/Material'
 import Mesh from '../common/Mesh'
-import {
-  initArrayBufferForLaterUse,
-  initAttributeVariable,
-  initElementArrayBufferForLaterUse
-} from "../utils/arrayBuffer"
 
 import vs from '../../shaders/axes.vert'
 import fs from '../../shaders/axes.frag'
