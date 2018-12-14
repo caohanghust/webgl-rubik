@@ -33,7 +33,7 @@ const Scene = class {
   }
   render () {
     const { gl, camera, light } = this
-    const vpMatrix = camera.matrix
+    const vpMatrix = camera.vpMatrix
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)

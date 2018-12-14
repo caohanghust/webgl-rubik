@@ -27,11 +27,12 @@ const Camera = class {
     console.log('proj', this.projMatrix.elements)
     this.updateViewMatrix()
     console.log('view', this.viewMatrix.elements)
-    // this.updateVPMatrix()
+    this.updateVPMatrix()
+    console.log('vp', this.vpMatrix.elements)
   }
   updateVPMatrix () {
     const { viewMatrix, projMatrix, vpMatrix } = this
-    vpMatrix.copy(projMatrix.clone().multiply(viewMatrix))
+    vpMatrix.copy(projMatrix.clone().multiply(viewMatrix.clone()))
   }
   setPosition (vec3) {
     this.position = vec3
