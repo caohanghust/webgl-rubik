@@ -1,4 +1,5 @@
 import '../css/index.styl'
+import { Vector3 } from "./utils/math"
 import Scene from './common/Scene'
 import Camera from './common/Camera'
 import Light from './common/Light'
@@ -23,9 +24,23 @@ const App = class {
     this.render()
   }
   initCamera (scene) {
-    const camera = new Camera()
-    camera.setPerspective(90, 1, .1, 10)
-    camera.lookAt(3, 3, 3, 0, 0, 0, 0, 1, 0)
+    const position = new Vector3(4, 4, 4)
+    const targetPosition = new Vector3(0, 0, 0)
+    const upDirection = new Vector3(0, 1, 0)
+    const fov = 90
+    const aspect = 1
+    const near = .1
+    const far = 10
+    const camera = new Camera({
+      position,
+      targetPosition,
+      upDirection,
+      fov,
+      aspect,
+      near,
+      far
+    })
+    console.log(camera)
     scene.add(camera)
   }
   initLight (scene) {
