@@ -21,13 +21,17 @@ const Camera = class {
     this.targetPosition = targetPosition
     this.upDirection = upDirection
 
-    this.updateViewMatrix()
+    // console.log(this.viewMatrix)
+    // this.updateViewMatrix()
     this.updateProjMatrix()
-    this.updateVPMatrix()
+    console.log('proj', this.projMatrix.elements)
+    this.updateViewMatrix()
+    console.log('view', this.viewMatrix.elements)
+    // this.updateVPMatrix()
   }
   updateVPMatrix () {
     const { viewMatrix, projMatrix, vpMatrix } = this
-    vpMatrix.copy(projMatrix.multiply(viewMatrix))
+    vpMatrix.copy(projMatrix.clone().multiply(viewMatrix))
   }
   setPosition (vec3) {
     this.position = vec3
@@ -95,10 +99,10 @@ const Camera = class {
     e[10] = -fz
     e[11] = 0
 
-    e[12] = 0
-    e[13] = 0
-    e[14] = 0
-    e[15] = 1
+    e[12] -= e[0] * eyeX + e[4] * eyeY + e[8]  * eyeZ
+    e[13] -= e[1] * eyeX + e[5] * eyeY + e[9]  * eyeZ
+    e[14] -= e[2] * eyeX + e[6] * eyeY + e[10] * eyeZ
+    e[15] = 1 - e[3] * eyeX + e[7] * eyeY + e[11] * eyeZ
 
     return e
   }

@@ -17,7 +17,7 @@ const App = class {
 
     const cube = new CubeMesh()
     const axes = new AxesMesh()
-    scene.add(cube)
+    // scene.add(cube)
     scene.add(axes)
 
     const stop = requestAnimationFrame(this.render, this)
