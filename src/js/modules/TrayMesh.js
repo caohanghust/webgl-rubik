@@ -3,134 +3,93 @@ import Matrix4 from '../utils/cuon-matrix'
 import Geometry from '../common/Geometry'
 import Material from '../common/Material'
 import Mesh from '../common/Mesh'
+
+import vs from '../../shaders/tray.vert'
+import fs from '../../shaders/tray.frag'
 import {
   initArrayBufferForLaterUse,
   initAttributeVariable,
   initElementArrayBufferForLaterUse
 } from "../utils/arrayBuffer"
 
-import vs from '../../shaders/cube.vert'
-import fs from '../../shaders/cube.frag'
-//    v6----- v5
-//   /|      /|
-//  v1------v0|
-//  | |     | |
-//  | |v7---|-|v4
-//  |/      |/
-//  v2------v3
+//  v3 ---------- v2
+//  |             |
+//  |             |
+//  |             |
+//  v0 ---------- v1
+
 const vertices = [
-  1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, // v0-v1-v2-v3 front
+  -1, 0, -1, 1, 0, -1, 1, 0,  1, // v0-v1-v2
 
-  1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, // v0-v3-v4-v5 right
-
-  1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, // v0-v5-v6-v1 up
-
-  -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, // v1-v6-v7-v2 left
-
-  -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0, // v7-v4-v3-v2 down
-
-  1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0 // v4-v7-v6-v5 back
-]
-
-//(0,1)               (1,1)
-//  -------------------
-//  |     |     |     |
-//  |  f  |  b  |  l  |
-//  |_____|_____|_____|
-//  |     |     |     |
-//  |  r  |  u  |  d  |
-//  |_____|_____|_____|
-//(0,0)               (1,0)
-const st = [
-  1 / 3, 1, 0, 1, 0, .5, 1 / 3, .5, // v0-v1-v2-v3 front
-
-  0, 0, 0, .5, 1 / 3, .5, 1 / 3, 0, // v0-v3-v4-v5 right
-
-  1 / 3, 0, 1 / 3, .5, 2 / 3, .5, 2 / 3, 0, // v0-v5-v6-v1 up
-
-  2 / 3, .5, 2 / 3, 1, 1, 1, 1, .5, // v1-v6-v7-v2 left
-
-  2 / 3, 0, 2 / 3, .5, 1, .5, 1, 0, // v7-v4-v3-v2 down
-
-  1 / 3, .5, 1 / 3, 1, 2 / 3, 1, 2 / 3, .5 // v4-v7-v6-v5 back
-]
-
-const normals = [
-  0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, // v0-v1-v2-v3 front
-
-  1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, // v0-v3-v4-v5 right
-
-  0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, // v0-v5-v6-v1 up
-
-  -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, // v1-v6-v7-v2 left
-
-  0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, // v7-v4-v3-v2 down
-
-  0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0 // v4-v7-v6-v5 back
-
+  -1, 0, -1, 1, 0, 1, -1, 0, 1, // v0-v2-v3
 ]
 
 const indices = [
-  0, 1, 2, 0, 2, 3, // front
-
-  4, 5, 6, 4, 6, 7, // right
-
-  8, 9, 10, 8, 10, 11, // up
-
-  12, 13, 14, 12, 14, 15, // left
-
-  16, 17, 18, 16, 18, 19, // down
-
-  20, 21, 22, 20, 22, 23 // back
+  0, 1, 2,
+  3, 4, 5
 ]
 
-const drawAllFace = () => {
+const sts = [
+  0, 0,
+  1, 0,
+  1, 1,
+  0, 0,
+  1, 1,
+  0, 1,
+]
+
+const normals = [
+  0, 1, 0,
+  0, 1, 0,
+  0, 1, 0,
+  0, 1, 0,
+  0, 1, 0,
+  0, 1, 0,
+]
+
+const trayGeom = new Geometry(vertices, indices, normals, sts)
+const trayMaterial = new Material(vs, fs)
+
+const drawTrayBg = () => {
   const canvas = document.createElement('canvas')
-  const itemSize = 100
-  const solidWidth = 10
   const ctx = canvas.getContext('2d')
-  canvas.width = itemSize * 3
-  canvas.height = itemSize * 2
+  const size = 500
+  const solidWidth = 1
+  const solidGap = 25
 
-  ctx.lineJoin = 'round'
-  ctx.lineWidth = solidWidth
-  const drawItem = (x, y, color) => {
-    ctx.beginPath()
-    ctx.fillStyle = color
-    ctx.strokeStyle = color
-    ctx.rect(x + solidWidth, y + solidWidth, itemSize - 2 * solidWidth, itemSize - 2 * solidWidth)
-    ctx.stroke()
-    ctx.fill()
-    ctx.closePath()
+  canvas.width = canvas.height = size
+
+  ctx.solidWidth = solidWidth
+  ctx.strokeStyle = '#999999'
+
+  for (let i = solidGap / 2; i < size; i += solidGap) {
+    for (let j = solidGap / 2; j < size; j += solidGap) {
+      ctx.moveTo(0, j)
+      ctx.lineTo(size, j)
+      ctx.stroke()
+      ctx.moveTo(i, 0)
+      ctx.lineTo(i, size)
+      ctx.stroke()
+    }
   }
-  ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-  drawItem(itemSize * 0, itemSize * 0, 'red')     //f
-  drawItem(itemSize * 1, itemSize * 0, 'orange')  //b
-  drawItem(itemSize * 2, itemSize * 0, 'white')   //l
-  drawItem(itemSize * 0, itemSize * 1, 'yellow')  //r
-  drawItem(itemSize * 1, itemSize * 1, 'blue')    //u
-  drawItem(itemSize * 2, itemSize * 1, 'green')   //d
   return canvas
 }
 
-const uniforms = {}
-
-const cubeGeom = new Geometry(vertices, indices, normals, st)
-const cubeMaterial = new Material(vs, fs, uniforms)
-
-const CubeMesh = class extends Mesh {
+const TrayMesh = class extends Mesh {
   constructor () {
-    super(cubeGeom, cubeMaterial)
+    super(trayGeom, trayMaterial)
     this.modelMatrix = new Matrix4()
     this.normalMatrix = new Matrix4()
+    this.modelMatrix.setTranslate(0, -5, 0)
+    this.modelMatrix.multiply((new Matrix4).setScale(10, 1, 10))
   }
   initGlData (gl) {
     this.initArrayBuffer(gl)
     this.initProgram(gl)
     this.initLight(gl)
     this.initTexture(gl)
+    this.initStaticUniform(gl)
   }
   initArrayBuffer (gl) {
     const { vertices, normals, sts, indices } = this.geometry
@@ -157,7 +116,6 @@ const CubeMesh = class extends Mesh {
     program.uMvpMatrix = gl.getUniformLocation(program, 'uMvpMatrix')
     program.uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix')
     program.uNormalMatrix = gl.getUniformLocation(program, 'uNormalMatrix')
-
   }
   initLight (gl) {
     const { program, scene } = this
@@ -179,7 +137,7 @@ const CubeMesh = class extends Mesh {
   }
   initTexture (gl) {
     const { program } = this
-    const textureImage = drawAllFace()
+    const textureImage = drawTrayBg()
     const texture = gl.createTexture()
     const uSampler = gl.getUniformLocation(program, 'uSample')
     Object.assign(this, { texture, uSampler, textureImage })
@@ -197,8 +155,14 @@ const CubeMesh = class extends Mesh {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, textureImage)
     gl.uniform1i(uSampler, 0)
   }
-  render (gl, vpMatrix) {
+  initStaticUniform (gl) {
     const { program, buffers, modelMatrix, normalMatrix } = this
+    gl.useProgram(program)
+    gl.uniformMatrix4fv(program.uModelMatrix, false, modelMatrix.elements)
+    gl.uniformMatrix4fv(program.uNormalMatrix, false, normalMatrix.elements)
+  }
+  render (gl, vpMatrix) {
+    const { program, buffers, modelMatrix } = this
 
     gl.useProgram(program)
     initAttributeVariable(gl, program.aPosition, buffers.vertexBuffer)
@@ -206,19 +170,13 @@ const CubeMesh = class extends Mesh {
     initAttributeVariable(gl, program.aTexCoord, buffers.stBuffer)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indexBuffer)
     this.loadTexture(gl)
-
     const mvpMatrix = new Matrix4(vpMatrix)
-    modelMatrix.rotate(1, 0, 1, 0)
     mvpMatrix.multiply(modelMatrix)
-    normalMatrix.setInverseOf(modelMatrix)
-    normalMatrix.transpose()
 
     gl.uniformMatrix4fv(program.uMvpMatrix, false, mvpMatrix.elements)
-    gl.uniformMatrix4fv(program.uModelMatrix, false, modelMatrix.elements)
-    gl.uniformMatrix4fv(program.uNormalMatrix, false, normalMatrix.elements)
-
-    gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_BYTE, 0)
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0)
   }
 }
+export default TrayMesh
 
-export default CubeMesh
+

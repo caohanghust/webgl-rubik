@@ -5,6 +5,7 @@ import Camera from './common/Camera'
 import Light from './common/Light'
 import CubeMesh from './modules/CubeMesh'
 import AxesMesh from './modules/AxesMesh'
+import TrayMesh from './modules/TrayMesh'
 import requestAnimationFrame from './utils/animationFrame'
 
 const App = class {
@@ -15,10 +16,13 @@ const App = class {
     this.initCamera(scene)
     this.initLight(scene)
 
+    const tray = new TrayMesh()
     const cube = new CubeMesh()
     const axes = new AxesMesh()
+
+    scene.add(axes)
+    scene.add(tray)
     scene.add(cube)
-    // scene.add(axes)
 
     const stop = requestAnimationFrame(this.render, this)
     this.render()
@@ -30,7 +34,7 @@ const App = class {
     const fov = 90
     const aspect = 1
     const near = .1
-    const far = 10
+    const far = 100
     const camera = new Camera({
       position,
       targetPosition,
@@ -40,7 +44,6 @@ const App = class {
       near,
       far
     })
-    console.log(camera)
     scene.add(camera)
   }
   initLight (scene) {

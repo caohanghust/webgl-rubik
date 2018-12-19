@@ -1,8 +1,6 @@
 import Mesh from '../common/Mesh'
 import Camera from '../common/Camera'
 import Light from '../common/Light'
-import Matrix4 from "../utils/cuon-matrix"
-
 
 const Scene = class {
   constructor (gl) {
