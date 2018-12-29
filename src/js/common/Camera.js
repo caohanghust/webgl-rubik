@@ -23,15 +23,28 @@ const Camera = class {
     // console.log(this.viewMatrix)
     // this.updateViewMatrix()
     this.updateProjMatrix()
-    console.log('proj', this.projMatrix.elements)
+    // console.log('proj', this.projMatrix.elements)
     this.updateViewMatrix()
-    console.log('view', this.viewMatrix.elements)
+    // console.log('view', this.viewMatrix.elements)
     this.updateVPMatrix()
-    console.log('vp', this.vpMatrix.elements)
+    // console.log('vp', this.vpMatrix.elements)
   }
   updateVPMatrix () {
     const { viewMatrix, projMatrix, vpMatrix } = this
     vpMatrix.copy(projMatrix.clone().multiply(viewMatrix.clone()))
+  }
+  setDegrees (lon, lat) {
+    const { targetPosition } = this
+    const phi = (90 - lat) / 180 * Math.PI
+    const theta = lon / 180 * Math.PI
+    // 固定距离
+    const distance = 5
+
+    const x = -distance * Math.sin(phi) * Math.sin(theta) + targetPosition.x
+    const y = distance * Math.cos(phi)
+    const z = -distance * Math.sin(phi) * Math.cos(theta) + targetPosition.z
+   
+    this.setPosition(new Vector3(x, y, z))
   }
   setPosition (vec3) {
     this.position = vec3

@@ -6,14 +6,15 @@ import Light from './common/Light'
 import CubeMesh from './modules/CubeMesh'
 import AxesMesh from './modules/AxesMesh'
 import TrayMesh from './modules/TrayMesh'
+import Controller from './common/Controller'
 import requestAnimationFrame from './utils/animationFrame'
 
 const App = class {
   constructor (containId) {
     const gl = App.initWebgl(containId)
     const scene = this.scene = new Scene(gl)
-
-    this.initCamera(scene)
+    const camera = this.camera = this.initCamera(scene)
+    const controller = this.controller = this.initController(camera)
     this.initLight(scene)
 
     const tray = new TrayMesh()
@@ -26,6 +27,9 @@ const App = class {
 
     const stop = requestAnimationFrame(this.render, this)
     this.render()
+  }
+  initController (camera) {
+    return new Controller(camera)
   }
   initCamera (scene) {
     const position = new Vector3(4, 4, 4)
@@ -45,9 +49,7 @@ const App = class {
       far
     })
     scene.add(camera)
-    window.Matrix = Matrix4
-    window.camera = camera
-    window.vector3 = Vector3
+    return camera
   }
   initLight (scene) {
     const light = new Light()
@@ -61,7 +63,8 @@ const App = class {
     scene.add(light)
   }
   render () {
-    const { scene } = this
+    const { scene, controller } = this
+    controller.update()
     scene.render()
   }
   static initWebgl (containId) {
