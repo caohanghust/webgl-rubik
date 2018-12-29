@@ -1,5 +1,5 @@
 import { createProgram } from '../utils/cuon-utils'
-import Matrix4 from '../utils/cuon-matrix'
+import { Matrix4, Vector3, Euler } from '../utils/math'
 import Geometry from '../common/Geometry'
 import Material from '../common/Material'
 import Mesh from '../common/Mesh'
@@ -207,10 +207,12 @@ const CubeMesh = class extends Mesh {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indexBuffer)
     this.loadTexture(gl)
 
-    const mvpMatrix = new Matrix4(vpMatrix)
-    modelMatrix.rotate(1, 0, 1, 0)
+    const mvpMatrix = vpMatrix.clone()
+    const rotateMatrix = new Matrix4().makeRotationFromEuler(new Euler(0, .02, 0))
+    modelMatrix.multiply(rotateMatrix)
     mvpMatrix.multiply(modelMatrix)
-    normalMatrix.setInverseOf(modelMatrix)
+
+    normalMatrix.getInverse(modelMatrix)
     normalMatrix.transpose()
 
     gl.uniformMatrix4fv(program.uMvpMatrix, false, mvpMatrix.elements)

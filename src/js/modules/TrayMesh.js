@@ -1,5 +1,5 @@
 import { createProgram } from '../utils/cuon-utils'
-import Matrix4 from '../utils/cuon-matrix'
+import { Matrix4, Vector3 } from "../utils/math"
 import Geometry from '../common/Geometry'
 import Material from '../common/Material'
 import Mesh from '../common/Mesh'
@@ -79,10 +79,9 @@ const drawTrayBg = () => {
 const TrayMesh = class extends Mesh {
   constructor () {
     super(trayGeom, trayMaterial)
-    this.modelMatrix = new Matrix4()
+    this.modelMatrix = new Matrix4().makeTranslation(0, -5, 0)
     this.normalMatrix = new Matrix4()
-    this.modelMatrix.setTranslate(0, -5, 0)
-    this.modelMatrix.multiply((new Matrix4).setScale(10, 1, 10))
+    this.modelMatrix.scale(new Vector3(10, 1, 10))
   }
   initGlData (gl) {
     this.initArrayBuffer(gl)
@@ -170,7 +169,7 @@ const TrayMesh = class extends Mesh {
     initAttributeVariable(gl, program.aTexCoord, buffers.stBuffer)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indexBuffer)
     this.loadTexture(gl)
-    const mvpMatrix = new Matrix4(vpMatrix)
+    const mvpMatrix = vpMatrix.clone()
     mvpMatrix.multiply(modelMatrix)
 
     gl.uniformMatrix4fv(program.uMvpMatrix, false, mvpMatrix.elements)

@@ -1,5 +1,5 @@
 import { createProgram } from '../utils/cuon-utils'
-import Matrix4 from '../utils/cuon-matrix'
+import { Matrix4, Vector3 } from '../utils/math'
 import Geometry from '../common/Geometry'
 import Material from '../common/Material'
 import Mesh from '../common/Mesh'
@@ -23,7 +23,7 @@ const AxesMesh = class extends Mesh {
   constructor () {
     super(axesGeom, axesMaterial)
     this.modelMatrix = new Matrix4()
-    this.modelMatrix.setScale(100, 100, 100)
+    this.modelMatrix.scale(new Vector3(100, 100, 100))
   }
   initGlData (gl) {
     this.initArrayBuffer(gl)
@@ -63,7 +63,7 @@ const AxesMesh = class extends Mesh {
     gl.vertexAttribPointer(program.aColor, 3, gl.FLOAT, false, fsize * 6, fsize * 3)
     gl.enableVertexAttribArray(program.aColor)
 
-    const mvpMatrix = new Matrix4(vpMatrix)
+    const mvpMatrix = vpMatrix.clone()
     mvpMatrix.multiply(modelMatrix)
 
     gl.uniformMatrix4fv(program.uMvpMatrix, false, mvpMatrix.elements)
