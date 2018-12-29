@@ -1,5 +1,5 @@
 import '../css/index.styl'
-import { Vector3 } from "./utils/math"
+import { Matrix4, Vector3 } from "./utils/math"
 import Scene from './common/Scene'
 import Camera from './common/Camera'
 import Light from './common/Light'
@@ -22,7 +22,7 @@ const App = class {
 
     scene.add(axes)
     scene.add(tray)
-    scene.add(cube)
+    // scene.add(cube)
 
     const stop = requestAnimationFrame(this.render, this)
     this.render()
@@ -45,6 +45,9 @@ const App = class {
       far
     })
     scene.add(camera)
+    window.Matrix = Matrix4
+    window.camera = camera
+    window.vector3 = Vector3
   }
   initLight (scene) {
     const light = new Light()

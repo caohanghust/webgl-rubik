@@ -99,9 +99,9 @@ const Camera = class {
     e[10] = -fz
     e[11] = 0
 
-    e[12] -= e[0] * eyeX + e[4] * eyeY + e[8]  * eyeZ
-    e[13] -= e[1] * eyeX + e[5] * eyeY + e[9]  * eyeZ
-    e[14] -= e[2] * eyeX + e[6] * eyeY + e[10] * eyeZ
+    e[12] = -e[0] * eyeX - e[4] * eyeY - e[8]  * eyeZ
+    e[13] = -e[1] * eyeX - e[5] * eyeY - e[9]  * eyeZ
+    e[14] = -e[2] * eyeX - e[6] * eyeY - e[10] * eyeZ
     e[15] = 1 - e[3] * eyeX + e[7] * eyeY + e[11] * eyeZ
 
     return e
