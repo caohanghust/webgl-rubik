@@ -6,6 +6,7 @@ import Light from './common/Light'
 import CubeMesh from './modules/CubeMesh'
 import AxesMesh from './modules/AxesMesh'
 import TrayMesh from './modules/TrayMesh'
+import CompassMesh from './modules/CompassMesh'
 import Controller from './common/Controller'
 import requestAnimationFrame from './utils/animationFrame'
 
@@ -20,10 +21,13 @@ const App = class {
     const tray = new TrayMesh()
     const cube = new CubeMesh()
     const axes = new AxesMesh()
+    const compass = new CompassMesh()
 
-    scene.add(axes)
+    // scene.add(axes)
     scene.add(tray)
+
     // scene.add(cube)
+    scene.add(compass)
 
     const stop = requestAnimationFrame(this.render, this)
     this.render()
