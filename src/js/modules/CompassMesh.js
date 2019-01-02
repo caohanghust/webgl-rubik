@@ -13,11 +13,12 @@ import vs from '../../shaders/compass.vert'
 import fs from '../../shaders/compass.frag'
 
 
-const v0 = [ 0.0, 1.0, 0.0 ]
-const v1 = [ -0.4, 0.0 ,0.0 ]
-const v2 = [ 0.4, 0.0, 0.0 ]
-const v3 = [ 0.0, -1.0, 0.0 ]
-const v4 = [ 0.0, 0.0, 0.3 ]
+const v0 = [ 1.0, 0.0, 0.0 ]
+const v1 = [ 0.0, 0.0, -0.4 ]
+const v2 = [ 0.0, 0.0, 0.4 ]
+const v3 = [ -1.0, 0.0, 0.0 ]
+const v4 = [ 0.0, 0.3, 0.0 ]
+const v5 = [ 0.0, -0.3, 0.0 ]
 
 const r1 = [ 0.96484375, 0.296875, 0.1875 ]
 const r2 = [ 0.62890625, 0.1328125, .05078125]
@@ -25,28 +26,28 @@ const w1 = [ 1.0, 1.0, 1.0 ]
 const w2 = [ 0.765625, 0.765625, 0.765625 ]
 
 // 点-颜色-点-颜色-点-颜色
-const verticeColors = [
-  // ...v0, ...w1, ...v1, ...w1, ...v4, ...w1,
-  // ...v0, ...w2, ...v4, ...w2, ...v2, ...w2,
-  // ...v1, ...w1, ...v3, ...w1, ...v4, ...w1,
-  // ...v2, ...w2, ...v4, ...w2, ...v3, ...w2
+const vertices = [
   ...v0, ...v1, ...v4,
+  ...v0, ...v5, ...v1,
   ...v0, ...v4, ...v2,
+  ...v0, ...v2, ...v5,
   ...v1, ...v3, ...v4,
+  ...v1, ...v5, ...v3,
   ...v2, ...v4, ...v3,
+  ...v2, ...v3, ...v5
+]
+const colors = [
+  ...r1, ...r1, ...r1,
+  ...r1, ...r1, ...r1,
+  ...r2, ...r2, ...r2,
+  ...r2, ...r2, ...r2,
+  ...w1, ...w1, ...w1,
+  ...w1, ...w1, ...w1,
+  ...w2, ...w2, ...w2,
+  ...w2, ...w2, ...w2
 ]
 
-// const verticeColors = [
-//   0, 0, 0, 1, 0, 0, //v0
-//   1, 0, 0, 1, 0, 0, //v1
-//   0, 0, 0, 0, 1, 0, //v0
-//   0, 1, 0, 0, 1, 0, //v2
-//   0, 0, 0, 0, 0, 1, //v0
-//   0, 0, 1, 0, 0, 1, //v3
-// ]
-console.log(verticeColors)
-
-const compassGeom = new Geometry(verticeColors)
+const compassGeom = new Geometry({ vertices, colors })
 const compassMaterial = new Material(vs, fs)
 
 const CompassMesh = class extends Mesh {
@@ -59,15 +60,12 @@ const CompassMesh = class extends Mesh {
     this.initProgram(gl)
   }
   initArrayBuffer (gl) {
-    const { vertices } = this.geometry
+    const { vertices, colors } = this.geometry
 
-    const fsize = vertices.BYTES_PER_ELEMENT
-    const vertexBuffer = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
-    vertexBuffer.fszie = fsize
+    const vertexBuffer = initArrayBufferForLaterUse(gl, vertices, 3, gl.FLOAT)
+    const colorsBuffer = initArrayBufferForLaterUse(gl, colors, 3, gl.FLOAT)
 
-    this.buffers = { vertexBuffer }
+    this.buffers = { vertexBuffer, colorsBuffer }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, null)
   }
@@ -84,18 +82,14 @@ const CompassMesh = class extends Mesh {
 
     gl.useProgram(program)
 
-    const fsize = buffers.vertexBuffer.fsize
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.vertexBuffer)
-    gl.vertexAttribPointer(program.aPosition, 3, gl.FLOAT, false, fsize * 3, 0)
-    gl.enableVertexAttribArray(program.aPosition)
-    // gl.vertexAttribPointer(program.aColor, 3, gl.FLOAT, false, fsize * 6, fsize * 3)
-    // gl.enableVertexAttribArray(program.aColor)
+    initAttributeVariable(gl, program.aPosition, buffers.vertexBuffer)
+    initAttributeVariable(gl, program.aColor, buffers.colorsBuffer)
 
     const mvpMatrix = vpMatrix.clone()
     mvpMatrix.multiply(modelMatrix)
 
     gl.uniformMatrix4fv(program.uMvpMatrix, false, mvpMatrix.elements)
-    gl.drawArrays(gl.TRIANGLES, 0, 12)
+    gl.drawArrays(gl.TRIANGLES, 0, 24)
   }
 }
 export default CompassMesh

@@ -16,7 +16,7 @@ const vertices = [
   0, 0, 1, 0, 0, 1, //v3
 ]
 
-const axesGeom = new Geometry(vertices)
+const axesGeom = new Geometry({ vertices })
 const axesMaterial = new Material(vs, fs)
 
 const AxesMesh = class extends Mesh {

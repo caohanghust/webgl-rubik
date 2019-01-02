@@ -117,7 +117,7 @@ const drawAllFace = () => {
 
 const uniforms = {}
 
-const cubeGeom = new Geometry(vertices, indices, normals, st)
+const cubeGeom = new Geometry({ vertices, indices, normals, st })
 const cubeMaterial = new Material(vs, fs, uniforms)
 
 const CubeMesh = class extends Mesh {

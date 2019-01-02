@@ -47,7 +47,7 @@ const normals = [
   0, 1, 0,
 ]
 
-const trayGeom = new Geometry(vertices, indices, normals, sts)
+const trayGeom = new Geometry({ vertices, indices, normals, sts })
 const trayMaterial = new Material(vs, fs)
 
 const drawTrayBg = () => {

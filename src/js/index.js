@@ -23,7 +23,7 @@ const App = class {
     const axes = new AxesMesh()
     const compass = new CompassMesh()
 
-    // scene.add(axes)
+    scene.add(axes)
     scene.add(tray)
 
     // scene.add(cube)
