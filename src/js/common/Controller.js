@@ -8,7 +8,7 @@ const Controller = class {
 
     this.mousePosition = { x: 0, y: 0 }
     this.prevMousePosition = { x: 0, y: 0 }
-    this.phi =0
+    this.phi = 0
     this.theta = 0
     this.lon = 0
     this.lat = 0

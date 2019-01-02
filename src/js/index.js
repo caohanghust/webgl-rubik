@@ -1,7 +1,7 @@
 import '../css/index.styl'
 import { Matrix4, Vector3 } from "./utils/math"
 import Scene from './common/Scene'
-import Camera from './common/Camera'
+import Camera, { CameraType } from './common/Camera'
 import Light from './common/Light'
 import CubeMesh from './modules/CubeMesh'
 import AxesMesh from './modules/AxesMesh'
@@ -15,18 +15,13 @@ const App = class {
     const gl = App.initWebgl(containId)
     const scene = this.scene = new Scene(gl)
     const camera = this.camera = this.initCamera(scene)
-    const controller = this.controller = this.initController(camera)
+    this.controller = this.initController(camera)
     this.initLight(scene)
 
-    const tray = new TrayMesh()
-    const cube = new CubeMesh()
     const axes = new AxesMesh()
     const compass = new CompassMesh()
 
     scene.add(axes)
-    scene.add(tray)
-
-    // scene.add(cube)
     scene.add(compass)
 
     const stop = requestAnimationFrame(this.render, this)
@@ -36,19 +31,25 @@ const App = class {
     return new Controller(camera)
   }
   initCamera (scene) {
+    const type = CameraType.ORTHO
     const position = new Vector3(4, 4, 4)
     const targetPosition = new Vector3(0, 0, 0)
     const upDirection = new Vector3(0, 1, 0)
-    const fov = 90
-    const aspect = 1
+    const left = -6
+    const right = 6
+    const top = 6
+    const bottom = -6
     const near = .1
     const far = 100
     const camera = new Camera({
+      type,
       position,
       targetPosition,
       upDirection,
-      fov,
-      aspect,
+      left,
+      right,
+      top,
+      bottom,
       near,
       far
     })
@@ -73,7 +74,8 @@ const App = class {
   }
   static initWebgl (containId) {
     const container  = document.getElementById(containId)
-    const { width, height } = container.getBoundingClientRect()
+    const width = 150
+    const height = 150
     const canvas = document.createElement('canvas')
 
     canvas.width = width

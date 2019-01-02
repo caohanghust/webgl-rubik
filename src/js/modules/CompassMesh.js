@@ -1,5 +1,5 @@
 import { createProgram } from '../utils/cuon-utils'
-import { Matrix4 } from '../utils/math'
+import { Matrix4, Vector3 } from '../utils/math'
 import Geometry from '../common/Geometry'
 import Material from '../common/Material'
 import Mesh from '../common/Mesh'
@@ -56,7 +56,8 @@ const compassMaterial = new Material(vs, fs)
 const CompassMesh = class extends Mesh {
   constructor () {
     super(compassGeom, compassMaterial)
-    this.modelMatrix = new Matrix4()
+    this.modelMatrix = new Matrix4().scale(new Vector3(3, 3, 3))
+
   }
   initGlData (gl) {
     this.initArrayBuffer(gl)

@@ -1,16 +1,33 @@
 import { Matrix4, Vector3 } from "../utils/math/index"
 
+export const CameraType = {
+  PERSPECTIVE: 0,
+  ORTHO: 1
+}
 const Camera = class {
   constructor ({
+    type = CameraType.PERSPECTIVE,
     position = new Vector3(1, 1, 1),
     targetPosition = new Vector3(0, 0, 0),
     upDirection = new Vector3(0, 1, 0),
+    left = -1,
+    right = 1,
+    bottom = -1,
+    top = 1,
     fov = 90,
     aspect = 1,
     near = .1,
     far = 10
   }) {
-    Object.assign(this, { fov, aspect, near, far })
+    if (type === CameraType.PERSPECTIVE) {
+      Object.assign(this, { type, fov, aspect, near, far })
+    }
+    else if (type === CameraType.ORTHO) {
+      Object.assign(this, { type, left, right, bottom, top, near, far })
+    }
+    else {
+      throw new Error('camera type is error')
+    }
 
     this.viewMatrix = new Matrix4()
     this.projMatrix = new Matrix4()
@@ -120,6 +137,51 @@ const Camera = class {
     return e
   }
   updateProjMatrix () {
+    const { type } = this
+    if (type === CameraType.PERSPECTIVE) {
+      this.updatePerspectiveProjMatrix()
+    }
+    else if (type === CameraType.ORTHO) {
+      this.updateOrthoProjMatrix()
+    }
+  }
+  updateOrthoProjMatrix () {
+    let { projMatrix, left, right, bottom, top, near, far } = this
+    const e = projMatrix.elements
+    let rw, rh, rd
+
+    if (left === right || bottom === top || near === far) {
+      throw 'null frustum'
+    }
+
+    rw = 1 / (right - left)
+    rh = 1 / (top - bottom)
+    rd = 1 / (far - near)
+
+
+    e[0]  = 2 * rw
+    e[1]  = 0
+    e[2]  = 0
+    e[3]  = 0
+
+    e[4]  = 0
+    e[5]  = 2 * rh
+    e[6]  = 0
+    e[7]  = 0
+
+    e[8]  = 0
+    e[9]  = 0
+    e[10] = -2 * rd
+    e[11] = 0
+
+    e[12] = -(right + left) * rw
+    e[13] = -(top + bottom) * rh
+    e[14] = -(far + near) * rd
+    e[15] = 1
+
+    return e
+  }
+  updatePerspectiveProjMatrix () {
     let { projMatrix, fov, aspect, near, far } = this
     const e = projMatrix.elements
     let rd, s, ct
