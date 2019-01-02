@@ -1,17 +1,15 @@
 import { createProgram } from '../utils/cuon-utils'
-import { Matrix4, Vector3, Euler } from '../utils/math'
+import { Matrix4 } from '../utils/math'
 import Geometry from '../common/Geometry'
 import Material from '../common/Material'
 import Mesh from '../common/Mesh'
 import {
   initArrayBufferForLaterUse,
   initAttributeVariable,
-  initElementArrayBufferForLaterUse
 } from "../utils/arrayBuffer"
 
 import vs from '../../shaders/compass.vert'
 import fs from '../../shaders/compass.frag'
-
 
 const v0 = [ 1.0, 0.0, 0.0 ]
 const v1 = [ 0.0, 0.0, -0.4 ]
