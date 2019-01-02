@@ -19,9 +19,11 @@ const App = class {
     this.initLight(scene)
 
     const axes = new AxesMesh()
+    const tray = new TrayMesh()
     const compass = new CompassMesh()
 
     scene.add(axes)
+    scene.add(tray)
     scene.add(compass)
 
     const stop = requestAnimationFrame(this.render, this)
@@ -74,8 +76,7 @@ const App = class {
   }
   static initWebgl (containId) {
     const container  = document.getElementById(containId)
-    const width = 150
-    const height = 150
+    const { width, height } = container.getBoundingClientRect()
     const canvas = document.createElement('canvas')
 
     canvas.width = width
